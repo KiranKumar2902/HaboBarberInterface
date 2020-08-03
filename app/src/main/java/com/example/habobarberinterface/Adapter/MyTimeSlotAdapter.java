@@ -10,10 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.habobarberinterface.AppointmentActivity;
 import com.example.habobarberinterface.Common.Common;
 import com.example.habobarberinterface.Interface.IRecyclerItemSelectedListener;
 import com.example.habobarberinterface.Model.TimeSlot;
 import com.example.habobarberinterface.R;
+import com.example.habobarberinterface.StaffHomeActivity;
 
 import java.sql.Time;
 import java.util.ArrayList;
@@ -123,6 +125,19 @@ public class MyTimeSlotAdapter extends RecyclerView.Adapter<MyTimeSlotAdapter.My
         @Override
         public void onClick(View view) {
             iRecyclerItemSelectedListener.onItemSelected(view,getAdapterPosition());
+            int position = getAdapterPosition();
+
+            for(TimeSlot slotValue:timeSlotList)
+            {
+                int slot = Integer.parseInt(slotValue.getSlot().toString());
+                if(slot == position) {
+                    System.out.println("##################################################### " + slot);
+                    System.out.println("##################################################### " + position);
+                    Intent intent = new Intent(view.getContext(), AppointmentActivity.class);
+                    intent.putExtra("slot", position);
+                    view.getContext().startActivity(intent);
+                }
+            }
         }
     }
 }

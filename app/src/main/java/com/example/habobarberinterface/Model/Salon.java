@@ -3,12 +3,17 @@ package com.example.habobarberinterface.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.firestore.PropertyName;
+
 public class Salon implements Parcelable {
-    private String name,address,salonID;
+    @PropertyName("Name")
+    private String name;
+    private String address,salonID;
 
     public Salon() {
     }
 
+    @PropertyName("Name")
     public String getName() {
         return name;
     }
