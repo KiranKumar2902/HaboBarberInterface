@@ -5,5 +5,10 @@
         android:icon="@drawable/ic_exit_to_app_black_24dp"
         android:title="Exit"/>
 
+    <item
+        android:id="@+id/menu_visits"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        android:title="Customer Tracker" />
+
 
 </menu>

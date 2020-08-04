@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="4dp"
@@ -9,32 +9,31 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/loginButtonText"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/txt_salon_name"
-            android:text="Salon #1"
-            android:textSize="20sp"
-            android:fontFamily="@font/bellerose"
-            android:gravity="center_horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </TextView>
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kollektif"
+            android:gravity="center_horizontal"
+            android:text="Salon #1"
+            android:textSize="20sp"></TextView>
 
         <TextView
             android:id="@+id/txt_salon_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kollektif"
+            android:gravity="center_horizontal"
             android:text="Salon #1"
             android:textSize="16sp"
-            android:textStyle="italic"
-            android:fontFamily="@font/bellerose"
-            android:gravity="center_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </TextView>
+            android:textStyle="italic"></TextView>
 
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

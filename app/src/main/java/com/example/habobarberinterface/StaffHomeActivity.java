@@ -2,22 +2,25 @@ package com.example.habobarberinterface;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+
+import com.example.habobarberinterface.Adapter.TrackerAdapter;
+import com.example.habobarberinterface.Listeners.IAppointmentsLoadListener;
+import com.example.habobarberinterface.Model.Appointment;
+import com.google.android.material.navigation.NavigationView;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
 import com.example.habobarberinterface.Adapter.MyTimeSlotAdapter;
 import com.example.habobarberinterface.Common.Common;
 import com.example.habobarberinterface.Common.SpacesItemDecoration;
@@ -37,10 +40,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -53,7 +54,7 @@ import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
 import dmax.dialog.SpotsDialog;
 import io.paperdb.Paper;
 
-public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoadListener {
+public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoadListener, IAppointmentsLoadListener {
 
     TextView txt_barber_name;
 
@@ -74,6 +75,7 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
     @BindView(R.id.calendarView)
     HorizontalCalendarView calendarView;
 
+
     //===== End Copy
 
     CollectionReference currentBookDateCollection;
@@ -82,23 +84,36 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
 
     ListenerRegistration bookingRealtimeListener;
 
+    IAppointmentsLoadListener onAppointmentsLoadListener;
+    boolean exists;
+    List<Appointment> appointments = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_staff_home);
 
+        onAppointmentsLoadListener = this;
+
+        Calendar date = Calendar.getInstance();
+        for (int i = 0; i >= -14; i--) {
+            date = Calendar.getInstance();
+            date.add(Calendar.DAY_OF_MONTH, i);
+
+            //load list of recent visits
+            getRecentVisitsForADate(Common.simpleDateFormat.format(date.getTime()));
+        }
+
         ButterKnife.bind(this);
-        
         init();
         initView();
 
-        
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(actionBarDrawerToggle.onOptionsItemSelected(item))
+        if (actionBarDrawerToggle.onOptionsItemSelected(item))
             return true;
         return super.onOptionsItemSelected(item);
     }
@@ -115,14 +130,19 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                if(menuItem.getItemId() == R.id.menu_exit)
+                if (menuItem.getItemId() == R.id.menu_exit) {
                     logOut();
+                } else if (menuItem.getItemId() == R.id.menu_visits) {
+                    Intent intent = new Intent(StaffHomeActivity.this, TrackerActivity.class);
+                    intent.putParcelableArrayListExtra("list", (ArrayList) appointments);
+                    startActivity(intent);
+                }
                 return true;
             }
         });
 
         View headerView = navigationView.getHeaderView(0);
-        txt_barber_name = (TextView)headerView.findViewById(R.id.txt_barber_name);
+        txt_barber_name = (TextView) headerView.findViewById(R.id.txt_barber_name);
         txt_barber_name.setText(Common.currentBarber.getName());
 
         //Copy from Barber Booking App (Client Interface)
@@ -130,7 +150,7 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
                 .build();
 
         Calendar date = Calendar.getInstance();
-        date.add(Calendar.DATE,0);
+        date.add(Calendar.DATE, 0);
         loadAvailableTimeSlotOfBarber(Common.currentBarber.getBarberId(),
                 Common.simpleDateFormat.format(date.getTime()));
 
@@ -144,7 +164,7 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
         Calendar startDate = Calendar.getInstance();
         startDate.add(Calendar.DATE, 0);
         Calendar endDate = Calendar.getInstance();
-        endDate.add(Calendar.DATE,2);
+        endDate.add(Calendar.DATE, 2);
 
         HorizontalCalendar horizontalCalendar = new HorizontalCalendar.Builder(this, R.id.calendarView)
                 .range(startDate, endDate)
@@ -160,8 +180,7 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
             public void onDateSelected(Calendar date, int position) {
 
 
-                if(Common.bookingDate.getTimeInMillis() != date.getTimeInMillis())
-                {
+                if (Common.bookingDate.getTimeInMillis() != date.getTimeInMillis()) {
                     Common.bookingDate = date;
                     loadAvailableTimeSlotOfBarber(Common.currentBarber.getBarberId(), Common.simpleDateFormat.format(date.getTime()));
                 }
@@ -206,15 +225,12 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
         alertDialog.show();
 
 
-
         barberDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful())
-                {
+                if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
-                    if(documentSnapshot.exists())
-                    {
+                    if (documentSnapshot.exists()) {
                         //Get information of booking
                         //If not created, return empty
                         CollectionReference date = FirebaseFirestore.getInstance()
@@ -229,16 +245,14 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
                         date.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if(task.isSuccessful())
-                                {
+                                if (task.isSuccessful()) {
                                     QuerySnapshot querySnapshot = task.getResult();
-                                    if(querySnapshot.isEmpty()) // no appts
-                                            iTimeSlotLoadListener.onTimeSlotLoadEmpty();
-                                    else
-                                    {
+                                    if (querySnapshot.isEmpty()) // no appts
+                                        iTimeSlotLoadListener.onTimeSlotLoadEmpty();
+                                    else {
                                         //if i have an appt
                                         List<TimeSlot> timeSlots = new ArrayList<>();
-                                        for(QueryDocumentSnapshot document:task.getResult())
+                                        for (QueryDocumentSnapshot document : task.getResult())
                                             timeSlots.add(document.toObject(TimeSlot.class));
                                         iTimeSlotLoadListener.onTimeSlotLoadSuccess(timeSlots);
 
@@ -256,7 +270,6 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
             }
         });
     }
-
 
 
     private void init() {
@@ -314,7 +327,7 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
 
     @Override
     public void onTimeSlotLoadSuccess(List<TimeSlot> timeSlot) {
-        MyTimeSlotAdapter adapter = new MyTimeSlotAdapter(this,timeSlot);
+        MyTimeSlotAdapter adapter = new MyTimeSlotAdapter(this, timeSlot);
         recycler_time_slot.setAdapter(adapter);
 
         alertDialog.dismiss();
@@ -336,6 +349,7 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
 
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -344,7 +358,7 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
 
     @Override
     protected void onStop() {
-        if(bookingRealtimeListener != null)
+        if (bookingRealtimeListener != null)
             bookingRealtimeListener.remove();
         super.onStop();
 
@@ -352,8 +366,70 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
 
     @Override
     protected void onDestroy() {
-        if(bookingRealtimeListener != null)
+        if (bookingRealtimeListener != null)
             bookingRealtimeListener.remove();
         super.onDestroy();
     }
+
+    public void getRecentVisitsForADate(String date) {
+        CollectionReference datesRef;
+
+        exists = false;
+
+        datesRef = FirebaseFirestore.getInstance()
+                .collection("AllSalon")
+                .document(Common.state_name)
+                .collection("Branch")
+                .document(Common.selected_salon.getSalonID())
+                .collection("Barber")
+                .document(Common.currentBarber.getBarberId())
+                .collection(date);
+
+        datesRef.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                           @Override
+                                           public void onComplete(@androidx.annotation.NonNull Task<QuerySnapshot> task) {
+
+                                               if (task.isSuccessful()) {
+                                                   exists = true;
+                                                   for (QueryDocumentSnapshot shop : task.getResult()) {
+                                                       Appointment appointment = shop.toObject(Appointment.class);
+                                                       System.out.println("------------------------------------------" + appointment.getCustomerName());
+                                                       System.out.println("------------------------------------------" + appointment.getCustomerPhone());
+                                                       System.out.println("------------------------------------------" + appointment.getSlot());
+                                                       System.out.println("------------------------------------------" + appointment.getTime());
+
+                                                       appointments.add(appointment);
+
+
+                                                   }
+
+                                                   onAppointmentsLoadListener.onAppointmentsLoadSuccess(appointments);
+                                               }
+                                           }
+
+                                       }
+
+                ).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@androidx.annotation.NonNull Exception e) {
+                onAppointmentsLoadListener.onAppointmentsLoadFailed(e.getMessage());
+
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onAppointmentsLoadSuccess(List<Appointment> banners) {
+        System.out.println("----------------------------------------------Returned list with size" + appointments.size());
+    }
+
+    @Override
+    public void onAppointmentsLoadFailed(String message) {
+        //Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+
+    }
 }
+

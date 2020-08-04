@@ -2,20 +2,20 @@ package com.example.habobarberinterface.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.habobarberinterface.AppointmentActivity;
 import com.example.habobarberinterface.Common.Common;
 import com.example.habobarberinterface.Interface.IRecyclerItemSelectedListener;
 import com.example.habobarberinterface.Model.TimeSlot;
 import com.example.habobarberinterface.R;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,6 +123,19 @@ public class MyTimeSlotAdapter extends RecyclerView.Adapter<MyTimeSlotAdapter.My
         @Override
         public void onClick(View view) {
             iRecyclerItemSelectedListener.onItemSelected(view,getAdapterPosition());
+            int position = getAdapterPosition();
+
+            for(TimeSlot slotValue:timeSlotList)
+            {
+                int slot = Integer.parseInt(slotValue.getSlot().toString());
+                if(slot == position) {
+                    System.out.println("##################################################### " + slot);
+                    System.out.println("##################################################### " + position);
+                    Intent intent = new Intent(view.getContext(), AppointmentActivity.class);
+                    intent.putExtra("slot", position);
+                    view.getContext().startActivity(intent);
+                }
+            }
         }
     }
 }
