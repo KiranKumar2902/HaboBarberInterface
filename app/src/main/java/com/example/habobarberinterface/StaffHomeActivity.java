@@ -2,20 +2,22 @@ package com.example.habobarberinterface;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+
+import com.example.habobarberinterface.Adapter.TrackerAdapter;
+import com.example.habobarberinterface.Listeners.IAppointmentsLoadListener;
+import com.example.habobarberinterface.Model.Appointment;
+import com.google.android.material.navigation.NavigationView;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.MenuItem;
-import android.widget.GridLayout;
 import android.widget.Toast;
 
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
 import com.example.habobarberinterface.Adapter.MyTimeSlotAdapter;
 import com.example.habobarberinterface.Common.Common;
 import com.example.habobarberinterface.Common.SpacesItemDecoration;
@@ -28,14 +30,11 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.List;
 
 import butterknife.BindView;
@@ -46,7 +45,7 @@ import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
 import dmax.dialog.SpotsDialog;
 import io.paperdb.Paper;
 
-public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoadListener {
+public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoadListener, IAppointmentsLoadListener {
 
     @BindView(R.id.activity_main)
     DrawerLayout drawerLayout;
@@ -65,18 +64,33 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
     @BindView(R.id.calendarView)
     HorizontalCalendarView calendarView;
 
+    IAppointmentsLoadListener onAppointmentsLoadListener;
+    boolean exists;
+    List<Appointment> appointments = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_staff_home);
 
+        onAppointmentsLoadListener = this;
+
+        Calendar date = Calendar.getInstance();
+        for(int i = 0; i>=-14; i--){
+            date = Calendar.getInstance();
+            date.add(Calendar.DAY_OF_MONTH, i);
+
+            //load list of recent visits
+            getRecentVisitsForADate(Common.simpleDateFormat.format(date.getTime()));
+        }
+
         ButterKnife.bind(this);
         
         init();
         initView();
 
-        
+
     }
 
     @Override
@@ -98,8 +112,13 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                if(menuItem.getItemId() == R.id.menu_exit)
+                if (menuItem.getItemId() == R.id.menu_exit) {
                     logOut();
+                } else if (menuItem.getItemId() == R.id.menu_visits) {
+                    Intent intent = new Intent(StaffHomeActivity.this, TrackerActivity.class);
+                    intent.putParcelableArrayListExtra("list", (ArrayList) appointments);
+                    startActivity(intent);
+                }
                 return true;
             }
         });
@@ -117,6 +136,8 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
         recycler_time_slot.setLayoutManager(layoutManager);
         recycler_time_slot.addItemDecoration(new SpacesItemDecoration(8));
+
+
 
 
         //Calendar
@@ -289,5 +310,67 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
 
         alertDialog.dismiss();
 
+    }
+
+    public void getRecentVisitsForADate(String date){
+        CollectionReference datesRef;
+
+        exists = false;
+
+        datesRef = FirebaseFirestore.getInstance()
+                .collection("AllSalon")
+                .document(Common.state_name)
+                .collection("Branch")
+                .document(Common.selected_salon.getSalonID())
+                .collection("Barber")
+                .document(Common.currentBarber.getBarberId())
+                .collection(date);
+
+        datesRef.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@androidx.annotation.NonNull Task<QuerySnapshot> task) {
+
+                        if(task.isSuccessful())
+                        {
+                            exists = true;
+                            for(QueryDocumentSnapshot shop:task.getResult())
+                            {
+                                Appointment appointment = shop.toObject(Appointment.class);
+                                System.out.println("------------------------------------------" + appointment.getCustomerName());
+                                System.out.println("------------------------------------------" + appointment.getCustomerPhone());
+                                System.out.println("------------------------------------------" + appointment.getSlot());
+                                System.out.println("------------------------------------------" + appointment.getTime());
+
+                                appointments.add(appointment);
+
+
+                            }
+
+                            onAppointmentsLoadListener.onAppointmentsLoadSuccess(appointments);
+                        }
+                    }
+
+                }
+
+                ).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@androidx.annotation.NonNull Exception e) {
+                onAppointmentsLoadListener.onAppointmentsLoadFailed(e.getMessage());
+
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onAppointmentsLoadSuccess(List<Appointment> banners) {
+        System.out.println("----------------------------------------------Returned list with size" + appointments.size());
+    }
+
+    @Override
+    public void onAppointmentsLoadFailed(String message) {
+        //Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 }

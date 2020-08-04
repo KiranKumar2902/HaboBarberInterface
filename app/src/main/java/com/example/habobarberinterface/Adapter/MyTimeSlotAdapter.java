@@ -2,9 +2,9 @@ package com.example.habobarberinterface.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +15,7 @@ import com.example.habobarberinterface.Common.Common;
 import com.example.habobarberinterface.Interface.IRecyclerItemSelectedListener;
 import com.example.habobarberinterface.Model.TimeSlot;
 import com.example.habobarberinterface.R;
-import com.example.habobarberinterface.StaffHomeActivity;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 

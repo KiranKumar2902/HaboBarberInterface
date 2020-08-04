@@ -17,7 +17,7 @@ public class Salon implements Parcelable {
     public String getName() {
         return name;
     }
-
+    @PropertyName("Name")
     public void setName(String name) {
         this.name = name;
     }
