@@ -12,7 +12,9 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.GridLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.esotericsoftware.kryo.serializers.FieldSerializer;
@@ -27,7 +29,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -38,6 +43,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.mulham.horizontalcalendar.HorizontalCalendar;
@@ -47,6 +54,8 @@ import dmax.dialog.SpotsDialog;
 import io.paperdb.Paper;
 
 public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoadListener {
+
+    TextView txt_barber_name;
 
     @BindView(R.id.activity_main)
     DrawerLayout drawerLayout;
@@ -64,6 +73,14 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
     RecyclerView recycler_time_slot;
     @BindView(R.id.calendarView)
     HorizontalCalendarView calendarView;
+
+    //===== End Copy
+
+    CollectionReference currentBookDateCollection;
+
+    EventListener<QuerySnapshot> bookingEvent;
+
+    ListenerRegistration bookingRealtimeListener;
 
 
     @Override
@@ -103,6 +120,10 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
                 return true;
             }
         });
+
+        View headerView = navigationView.getHeaderView(0);
+        txt_barber_name = (TextView)headerView.findViewById(R.id.txt_barber_name);
+        txt_barber_name.setText(Common.currentBarber.getName());
 
         //Copy from Barber Booking App (Client Interface)
         alertDialog = new SpotsDialog.Builder().setCancelable(false).setContext(this)
@@ -184,13 +205,7 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
         //Copy from Barber Booking App
         alertDialog.show();
 
-        barberDoc = FirebaseFirestore.getInstance()
-                .collection("AllSalon")
-                .document(Common.state_name)
-                .collection("Branch")
-                .document(Common.selected_salon.getSalonID())
-                .collection("Barber")
-                .document(barberId);
+
 
         barberDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -246,6 +261,36 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
 
     private void init() {
         iTimeSlotLoadListener = this;
+
+        initBookingRealtimeUpdate();
+
+    }
+
+    private void initBookingRealtimeUpdate() {
+
+        barberDoc = FirebaseFirestore.getInstance()
+                .collection("AllSalon")
+                .document(Common.state_name)
+                .collection("Branch")
+                .document(Common.selected_salon.getSalonID())
+                .collection("Barber")
+                .document(Common.currentBarber.getBarberId());
+
+        //Get current date
+        final Calendar date = Calendar.getInstance();
+        date.add(Calendar.DATE, 0);
+        bookingEvent = new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                loadAvailableTimeSlotOfBarber(Common.currentBarber.getBarberId(),
+                        Common.simpleDateFormat.format(date.getTime()));
+            }
+        };
+
+        currentBookDateCollection = barberDoc.collection(Common.simpleDateFormat.format(date.getTime()));
+
+        bookingRealtimeListener = currentBookDateCollection.addSnapshotListener(bookingEvent);
     }
 
     @Override
@@ -289,5 +334,26 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
 
         alertDialog.dismiss();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initBookingRealtimeUpdate();
+    }
+
+    @Override
+    protected void onStop() {
+        if(bookingRealtimeListener != null)
+            bookingRealtimeListener.remove();
+        super.onStop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(bookingRealtimeListener != null)
+            bookingRealtimeListener.remove();
+        super.onDestroy();
     }
 }
