@@ -298,6 +298,7 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
 
                 loadAvailableTimeSlotOfBarber(Common.currentBarber.getBarberId(),
                         Common.simpleDateFormat.format(date.getTime()));
+
             }
         };
 
@@ -371,7 +372,7 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
         super.onDestroy();
     }
 
-    public void getRecentVisitsForADate(String date) {
+    public void getRecentVisitsForADate(final String date) {
         CollectionReference datesRef;
 
         exists = false;
@@ -399,8 +400,13 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
                                                        System.out.println("------------------------------------------" + appointment.getSlot());
                                                        System.out.println("------------------------------------------" + appointment.getTime());
 
-                                                       appointments.add(appointment);
-
+                                                       if(date.compareTo(Common.simpleDateFormat.format(Calendar.getInstance().getTime()))==0){
+                                                           if(checkIfCustomerArrived(appointment.getSlot())){
+                                                               appointments.add(appointment);
+                                                           }
+                                                       }else{
+                                                           appointments.add(appointment);
+                                                       }
 
                                                    }
 
@@ -430,6 +436,153 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
     public void onAppointmentsLoadFailed(String message) {
         //Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
 
+    }
+
+    public boolean checkIfCustomerArrived(int slot){
+        long arrivalTime = checkStartTime(slot);
+        System.out.println("###########################################################: " + arrivalTime);
+
+        System.out.println("###########################################################: " + Calendar.getInstance().getTimeInMillis());
+
+        if(arrivalTime<=Calendar.getInstance().getTimeInMillis()){
+            return true;
+        }else{return false;}
+    }
+
+    public long checkStartTime(int slot){
+
+        Calendar date = Calendar.getInstance();
+
+        switch(slot) {
+            case 0:
+                date.set(Calendar.HOUR, 9);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.AM);
+                return date.getTimeInMillis();
+            case 1:
+                date.set(Calendar.HOUR, 9);
+                date.set(Calendar.MINUTE, 30);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.AM);
+                return date.getTimeInMillis();
+            case 2:
+                date.set(Calendar.HOUR, 10);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.AM);
+                return date.getTimeInMillis();
+            case 3:
+                date.set(Calendar.HOUR, 10);
+                date.set(Calendar.MINUTE, 30);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.AM);
+                return date.getTimeInMillis();
+            case 4:
+                date.set(Calendar.HOUR, 11);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.AM);
+                return date.getTimeInMillis();
+            case 5:
+                date.set(Calendar.HOUR, 11);
+                date.set(Calendar.MINUTE, 30);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.AM);
+                return date.getTimeInMillis();
+            case 6:
+                date.set(Calendar.HOUR, 12);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 7:
+                date.set(Calendar.HOUR, 12);
+                date.set(Calendar.MINUTE, 30);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 8:
+                date.set(Calendar.HOUR, 1);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 9:
+                date.set(Calendar.HOUR, 1);
+                date.set(Calendar.MINUTE, 30);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 10:
+                date.set(Calendar.HOUR, 2);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 11:
+                date.set(Calendar.HOUR, 2);
+                date.set(Calendar.MINUTE, 30);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 12:
+                date.set(Calendar.HOUR, 3);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 13:
+                date.set(Calendar.HOUR, 3);
+                date.set(Calendar.MINUTE, 30);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 14:
+                date.set(Calendar.HOUR, 4);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 15:
+                date.set(Calendar.HOUR, 4);
+                date.set(Calendar.MINUTE, 30);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 16:
+                date.set(Calendar.HOUR, 5);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 17:
+                date.set(Calendar.HOUR, 5);
+                date.set(Calendar.MINUTE, 30);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 18:
+                date.set(Calendar.HOUR, 6);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 19:
+                date.set(Calendar.HOUR, 6);
+                date.set(Calendar.MINUTE, 30);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            case 20:
+                date.set(Calendar.HOUR, 7);
+                date.set(Calendar.MINUTE, 0);
+                date.set(Calendar.SECOND, 0);
+                date.set(Calendar.AM_PM, Calendar.PM);
+                return date.getTimeInMillis();
+            default:
+                return 0;
+        }
     }
 }
 
