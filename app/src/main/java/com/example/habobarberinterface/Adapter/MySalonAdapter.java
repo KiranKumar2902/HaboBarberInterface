@@ -100,7 +100,7 @@ public class MySalonAdapter extends RecyclerView.Adapter<MySalonAdapter.MyViewHo
     @Override
     public void onClickPositiveButton(final DialogInterface dialogInterface, final String userName, String password) {
         //Show loading dialog
-        final AlertDialog loading = new SpotsDialog.Builder().setCancelable(false)
+        final AlertDialog loading = new SpotsDialog.Builder().setTheme(R.style.Custom).setCancelable(false)
                 .setContext(context).build();
 
         loading.show();

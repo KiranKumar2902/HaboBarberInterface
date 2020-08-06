@@ -96,6 +96,7 @@ public class SalonListActivity extends AppCompatActivity implements IOnLoadCount
     private void init() {
         dialog = new SpotsDialog.Builder().setContext(this)
                 .setCancelable(false)
+                .setTheme(R.style.Custom)
                 .build();
         iOnLoadCountSalon=this;
         iBranchLoadListener=this;
@@ -109,7 +110,7 @@ public class SalonListActivity extends AppCompatActivity implements IOnLoadCount
 
     @Override
     public void onLoadCountSalonSuccess(int count) {
-        txt_salon_count.setText(new StringBuilder("All Salon (")
+        txt_salon_count.setText(new StringBuilder("All Salons (")
         .append(count)
         .append(")"));
     }

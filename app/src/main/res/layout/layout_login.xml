@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#000000"
+    android:background="@color/colorPrimary"
     android:orientation="vertical"
     android:scrollbarThumbHorizontal="@color/loginButtonText"
     android:scrollbarThumbVertical="@color/loginButtonText">
@@ -20,13 +20,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:background="@color/loginButton"
-            android:fontFamily="@font/norwester"
+            android:background="@color/colorPrimaryDark"
+            android:fontFamily="@font/bellerose"
             android:gravity="center"
             android:padding="10dp"
+            android:textStyle="bold"
             android:text="STAFF LOGIN"
             android:textAppearance="@android:style/TextAppearance.Large"
-            android:textColor="#000000" />
+            android:textColor="#ffffff" />
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edt_user"
@@ -35,6 +36,7 @@
             android:layout_margin="8dp"
             android:fontFamily="@font/bellerose"
             android:hint="Staff User"
+            android:singleLine="true"
             android:textColor="@color/loginButtonText"
             android:textColorHighlight="@color/loginButtonText"
             android:textColorHint="@color/loginButtonText"
@@ -47,6 +49,8 @@
             android:layout_margin="8dp"
             android:fontFamily="@font/bellerose"
             android:hint="Staff Password"
+            android:singleLine="true"
+            android:inputType="textPassword"
             android:scrollbarThumbHorizontal="@color/loginButtonText"
             android:scrollbarThumbVertical="@color/loginButtonText"
             android:textColor="@color/loginButtonText"

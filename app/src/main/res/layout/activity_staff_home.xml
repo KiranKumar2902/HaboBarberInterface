@@ -18,8 +18,8 @@
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/loginButtonText"
-            app:textColorSelected="@color/colorButton" />
+            android:background="@color/colorPrimary"
+            app:textColorSelected="#FFFFFF" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_salon"
     app:cardCornerRadius="4dp"
-
+    android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 

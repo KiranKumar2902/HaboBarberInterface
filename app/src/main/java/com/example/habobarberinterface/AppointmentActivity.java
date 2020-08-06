@@ -65,7 +65,7 @@ public class AppointmentActivity extends AppCompatActivity {
                 .document(Common.currentBarber.getBarberId())
                 .collection(Common.simpleDateFormat.format(Common.bookingDate.getTime()))
                 .document(Long.toString(slot));
-        dialog = new SpotsDialog.Builder().setContext(this).setCancelable(false).build();
+        dialog = new SpotsDialog.Builder().setContext(this).setCancelable(false).setTheme(R.style.Custom).build();
 
                 loadSlot();
 

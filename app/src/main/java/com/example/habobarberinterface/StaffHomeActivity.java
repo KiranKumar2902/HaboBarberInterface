@@ -143,10 +143,10 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
 
         View headerView = navigationView.getHeaderView(0);
         txt_barber_name = (TextView) headerView.findViewById(R.id.txt_barber_name);
-        txt_barber_name.setText(Common.currentBarber.getName());
+        txt_barber_name.setText("Welcome back, " + Common.currentBarber.getName());
 
         //Copy from Barber Booking App (Client Interface)
-        alertDialog = new SpotsDialog.Builder().setCancelable(false).setContext(this)
+        alertDialog = new SpotsDialog.Builder().setCancelable(false).setTheme(R.style.Custom).setContext(this)
                 .build();
 
         Calendar date = Calendar.getInstance();
@@ -314,7 +314,7 @@ public class StaffHomeActivity extends AppCompatActivity implements ITimeSlotLoa
                 .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast.makeText(StaffHomeActivity.this, "Fake function exit", Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override

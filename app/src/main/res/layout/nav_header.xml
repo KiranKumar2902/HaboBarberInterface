@@ -2,13 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:background="@android:color/white">
+    android:layout_height="wrap_content">
     <ImageView
         android:layout_width="180dp"
         android:layout_height="130dp"
         android:layout_marginTop="15dp"
+        android:visibility="gone"
         android:layout_marginBottom="15dp"
         android:background="@drawable/logo"/>
 
@@ -17,7 +16,22 @@
         android:layout_height="wrap_content"
         android:id="@+id/txt_barber_name"
         android:text="000"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="24dp"
+        android:textSize="28sp"
         android:textStyle="bold"
+        android:fontFamily="@font/bellerose"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_barber"
+        android:text="Please make sure to logout once you have checked your bookings and ensure you check your customer tracker accuracy to comply with state and federal Covid-19 guidelines."
+        android:layout_marginLeft="26dp"
+        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="32dp"
         android:fontFamily="@font/bellerose"/>
 
 

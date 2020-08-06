@@ -17,10 +17,11 @@
             android:id="@+id/trackerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:text="Error: Name"
-            android:textSize="18sp"
+            android:textSize="26sp"
+            android:fontFamily="@font/bellerose"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -31,6 +32,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Error: Time"
+            android:fontFamily="@font/bellerose"
+
             app:layout_constraintStart_toStartOf="@+id/trackerName"
             app:layout_constraintTop_toBottomOf="@+id/trackerName" />
 
@@ -38,9 +41,11 @@
             android:id="@+id/trackerMobile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="16dp"
             android:text="Error: Mobile"
+            android:fontFamily="@font/bellerose"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/trackerTime"
             app:layout_constraintTop_toBottomOf="@+id/trackerTime" />

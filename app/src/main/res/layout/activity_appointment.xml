@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBackground"
     tools:context=".AppointmentActivity">
 
     <TextView
@@ -11,8 +12,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
+        android:textColor="@color/colorButton"
+        android:textStyle="bold"
+        android:fontFamily="@font/bellerose"
         android:text="Booking Details"
-        android:textSize="30sp"
+        android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -21,6 +25,9 @@
         android:id="@+id/tBarbershop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/colorButton"
+        android:textStyle="bold"
+        android:fontFamily="@font/bellerose"
         android:layout_marginTop="60dp"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,6 +39,10 @@
         android:id="@+id/tLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/colorButton"
+        android:textStyle="bold"
+        android:textSize="28sp"
+        android:fontFamily="@font/bellerose"
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="@+id/tBarbershop"
         app:layout_constraintTop_toBottomOf="@+id/tBarbershop" />
@@ -42,6 +53,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:visibility="visible"
+        android:textSize="28sp"
+        android:textColor="@color/colorButton"
+        android:textStyle="bold"
+        android:fontFamily="@font/bellerose"
         app:layout_constraintStart_toStartOf="@+id/tLocation"
         app:layout_constraintTop_toBottomOf="@+id/tLocation" />
 
@@ -50,6 +65,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:textColor="@color/colorButton"
+        android:textStyle="bold"
+        android:textSize="28sp"
+        android:fontFamily="@font/bellerose"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="@+id/tCustomerName"
         app:layout_constraintTop_toBottomOf="@+id/tCustomerName" />
@@ -58,8 +77,11 @@
         android:id="@+id/tBookingTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:textSize="24sp"
+        android:layout_marginTop="90dp"
+        android:textSize="50sp"
+        android:textColor="@color/colorButton"
+        android:textStyle="bold"
+        android:fontFamily="@font/bellerose"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />

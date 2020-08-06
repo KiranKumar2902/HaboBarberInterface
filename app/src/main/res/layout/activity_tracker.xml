@@ -26,15 +26,18 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#000000">
+            android:background="@color/colorPrimary">
 
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="25dp"
+                android:textSize="18sp"
+                android:fontFamily="@font/bellerose"
                 android:text="Past 14 Days"
-                android:textColor="#c2b59b"
+                android:textColor="#ffffff"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/textView2"
                 app:layout_constraintStart_toStartOf="@+id/textView2"
@@ -45,10 +48,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
-                android:fontFamily="@font/norwester"
+                android:fontFamily="@font/bellerose"
                 android:text="Your Previous Customers"
-                android:textColor="#c2b59b"
+                android:textColor="#ffffff"
                 android:textSize="30sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
