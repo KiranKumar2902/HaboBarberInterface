@@ -16,6 +16,7 @@ import com.example.habobarberinterface.Common.SpacesItemDecoration;
 import com.example.habobarberinterface.Interface.IOnAllStateLoadListener;
 import com.example.habobarberinterface.Model.Barber;
 import com.example.habobarberinterface.Model.City;
+import com.example.habobarberinterface.Model.City2;
 import com.example.habobarberinterface.Model.Salon;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -103,7 +104,16 @@ public class MainActivity extends AppCompatActivity implements IOnAllStateLoadLi
                     List<City> cities = new ArrayList<>();
                     for(DocumentSnapshot citySnapShot:task.getResult())
                     {
+                        City2 extra;
                         City city = citySnapShot.toObject(City.class);
+
+                        if(city.getName()==null){
+                            System.out.println("###############################: Activated if statement");
+                            extra = citySnapShot.toObject(City2.class);
+                            city = new City();
+                            city.setName(extra.getName());
+                        }
+
                         cities.add(city);
 
                     }
