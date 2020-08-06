@@ -10,7 +10,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/loginButtonText"
         android:orientation="vertical"
         android:padding="16dp">
@@ -20,6 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/kollektif"
+            android:textStyle="bold"
             android:gravity="center_horizontal"
             android:text="Salon #1"
             android:textSize="20sp"></TextView>
@@ -28,10 +29,11 @@
             android:id="@+id/txt_salon_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/kollektif"
+            android:fontFamily="@font/bellerose"
             android:gravity="center_horizontal"
+            android:layout_marginTop="8dp"
             android:text="Salon #1"
-            android:textSize="16sp"
+            android:textSize="12sp"
             android:textStyle="italic"></TextView>
 
     </LinearLayout>

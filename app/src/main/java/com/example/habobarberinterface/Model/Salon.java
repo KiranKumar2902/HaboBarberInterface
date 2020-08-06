@@ -8,6 +8,7 @@ import com.google.firebase.firestore.PropertyName;
 public class Salon implements Parcelable {
     @PropertyName("Name")
     private String name;
+    @PropertyName("Address")
     private String address,salonID;
 
     public Salon() {

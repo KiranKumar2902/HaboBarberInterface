@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements IOnAllStateLoadLi
     private void initView() {
         recycler_state.setHasFixedSize(true);
         recycler_state.setLayoutManager(new GridLayoutManager(this,1));
-        recycler_state.addItemDecoration(new SpacesItemDecoration(1));
+        recycler_state.addItemDecoration(new SpacesItemDecoration(2));
 
     }
 
